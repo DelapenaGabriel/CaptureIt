@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* ─── Old Money Theme ─── */
+@theme {
+  --color-ivory: #faf8f5;
+  --color-cream: #f5f0e8;
+  --color-champagne: #f5e6d3;
+  --color-parchment: #ede5d8;
+  --color-gold: #c5a059;
+  --color-gold-light: #d4b978;
+  --color-gold-dark: #a68a3e;
+  --color-forest: #1a2f25;
+  --color-forest-light: #2f4a3b;
+  --color-sage: #8a9a5b;
+  --color-sage-light: #a8b87a;
+  --color-charcoal: #2c2c2c;
+  --color-charcoal-light: #4a4a4a;
+  --color-warm-white: #f0f0ee;
+  --color-warm-gray: #d8e2dc;
+
+  --font-serif: "Bodoni Moda", serif;
+  --font-script: "Pinyon Script", cursive;
+
+  --ease-heavy: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-elegant: cubic-bezier(0.4, 0, 0.2, 1);
+}
