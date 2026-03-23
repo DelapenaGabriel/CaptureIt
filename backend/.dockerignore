@@ -1,0 +1,11 @@
+target/
+.mvn/
+mvnw
+mvnw.cmd
+.idea/
+*.log
+.DS_Store
+apache-maven-*/
+apache-maven-*.tar.gz
+
+.env

@@ -3,7 +3,7 @@
     <h2 class="section-title" data-aos="fade-up">Répondez S'il Vous Plaît</h2>
     <div class="gold-divider" data-aos="fade-up" data-aos-delay="100">✦</div>
     <p class="section-subtitle" data-aos="fade-up" data-aos-delay="150">
-      Kindly respond by March 15, 2026
+      Kindly respond by April 20, 2026
     </p>
 
     <!-- Success State -->
@@ -69,21 +69,6 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="mealPref">Meal Preference</label>
-          <select
-            id="mealPref"
-            v-model="form.mealPreference"
-            class="form-input"
-          >
-            <option value="">Select a preference</option>
-            <option value="filet">Filet Mignon</option>
-            <option value="salmon">Pan-Seared Salmon</option>
-            <option value="chicken">Herb Roasted Chicken</option>
-            <option value="vegetarian">Garden Vegetarian</option>
-            <option value="vegan">Chef's Vegan</option>
-          </select>
-        </div>
 
         <div class="form-group">
           <label class="form-label" for="songReq"
@@ -131,7 +116,6 @@ export default {
         guestName: "",
         attending: null,
         guestCount: "1",
-        mealPreference: "",
         songRequest: "",
         message: "",
       },
@@ -142,10 +126,30 @@ export default {
       if (this.form.attending === null) return;
       this.submitting = true;
 
-      // Simulate API call — will connect to backend later
+      const rsvpData = {
+        name: this.form.guestName,
+        attending: this.form.attending,
+        guests: parseInt(this.form.guestCount),
+        songRequest: this.form.songRequest,
+        message: this.form.message,
+        email: "" // Optional but in model
+      };
+
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const response = await fetch("http://localhost:9000/api/rsvps", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(rsvpData),
+        });
+
+        if (!response.ok) throw new Error("Failed to submit RSVP");
+
         this.submitted = true;
+      } catch (error) {
+        console.error("Error submitting RSVP:", error);
+        alert("There was an error submitting your RSVP. Please try again later.");
       } finally {
         this.submitting = false;
       }

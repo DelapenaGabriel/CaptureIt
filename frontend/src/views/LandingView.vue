@@ -27,6 +27,9 @@
         <!-- Event Details -->
         <EventDetails />
 
+        <!-- RSVP -->
+        <RsvpForm v-if="!store.weddingDayMode" />
+
         <!-- Our Story -->
         <OurStorySection />
 
@@ -39,8 +42,7 @@
         <!-- The Proposal Video Section -->
         <ProposalSection />
 
-        <!-- RSVP
-        <RsvpForm v-if="!store.weddingDayMode" /> -->
+       
 
         <!-- Guest Book CTA -->
         <section class="guestbook-cta section" data-aos="fade-up">

@@ -295,8 +295,9 @@ export default {
   data() {
     return {
       form: { name: "", relationship: "", message: "" },
-      messages: this.generateMessages(),
+      messages: [],
       visibleCount: 9,
+      loading: false
     };
   },
   computed: {
@@ -304,344 +305,73 @@ export default {
       return this.messages.slice(0, this.visibleCount);
     },
   },
-  mounted() {
+  async mounted() {
     this.initParticles();
+    await this.fetchMessages();
   },
   beforeUnmount() {
     cancelAnimationFrame(this.animFrame);
   },
   methods: {
-    generateMessages() {
-      const entries = [
-        {
-          name: "Sarah Mitchell",
-          relationship: "Friend of the Couple",
-          text: "From the moment I saw you two together, I knew it was something extraordinary. Your love is the kind that makes the whole room glow. Here's to a lifetime of beautiful moments together! 🥂",
-          likes: 24,
-        },
-        {
-          name: "David Chen",
-          relationship: "Colleague",
-          text: "Wishing you both a marriage as beautiful as a sunrise and as enduring as the stars. Congratulations!",
-          likes: 18,
-        },
-        {
-          name: "Maria Santos",
-          relationship: "Family of the Bride",
-          text: "My dearest Norma, watching you grow into the woman you are today has been my greatest joy. Jonathan, welcome to the family — take care of our girl. We love you both so much. 💕",
-          likes: 42,
-        },
-        {
-          name: "James Thompson",
-          relationship: "Friend of the Couple",
-          text: "You two are proof that true love exists. May your journey together be filled with adventure, laughter, and endless cups of morning coffee.",
-          likes: 15,
-        },
-        {
-          name: "Isabella Romano",
-          relationship: "Family of the Groom",
-          text: "Jonathan, you've found your perfect match. Norma, you're already family. May God bless your union with joy, patience, and abiding love.",
-          likes: 31,
-        },
-        {
-          name: "Marcus King",
-          relationship: "Friend of the Couple",
-          text: "Bros before... well, Norma is the exception to every rule. 😂 But seriously, I've never seen Jonathan this happy. You two are perfect for each other.",
-          likes: 28,
-        },
-        {
-          name: "Elena Petrov",
-          relationship: "Colleague",
-          text: "Working with Jonathan taught me about dedication. Seeing him with Norma taught me about love. Beautiful wedding for a beautiful couple! ✨",
-          likes: 12,
-        },
-        {
-          name: "Robert & Claire",
-          relationship: "Family of the Bride",
-          text: "Marriage is a garden that needs tending every day. Water it with kindness, feed it with patience, and it will bloom in ways you never imagined. All our love, Uncle Rob & Aunt Claire.",
-          likes: 35,
-        },
-        {
-          name: "Aisha Johnson",
-          relationship: "Friend of the Couple",
-          text: "Can we talk about how GORGEOUS this venue is?! But honestly, nothing shines brighter than you two together. Cheering you on always! 🎉",
-          likes: 19,
-        },
-        {
-          name: "Thomas Wright",
-          relationship: "Family of the Groom",
-          text: "Son, today you become a husband. Remember: happy wife, happy life. But more importantly, be the kind of partner who makes her laugh every single day.",
-          likes: 38,
-        },
-        {
-          name: "Sophie Laurent",
-          relationship: "Friend of the Couple",
-          text: "Your love story reads like a fairytale, but it's so much better because it's real. Wishing you both infinite happiness.",
-          likes: 22,
-        },
-        {
-          name: "Daniel Park",
-          relationship: "Colleague",
-          text: "To the couple who proves that work-life balance means finding someone worth coming home to. Congratulations! 🍾",
-          likes: 14,
-        },
-        {
-          name: "Grace Williams",
-          relationship: "Family of the Bride",
-          text: "From the little girl who dreamed of princesses to the queen she is today — Norma, you've always been magic. Jonathan is so lucky. We all are.",
-          likes: 44,
-        },
-        {
-          name: "Michael Torres",
-          relationship: "Friend of the Couple",
-          text: "Remember that road trip where you two couldn't stop finishing each other's sentences? That's when we all knew. Much love to you both!",
-          likes: 16,
-        },
-        {
-          name: "Lily Chang",
-          relationship: "Friend of the Couple",
-          text: "Two souls, one heart. May your love continue to inspire everyone around you. 💖",
-          likes: 20,
-        },
-        {
-          name: "Benjamin Fox",
-          relationship: "Family of the Groom",
-          text: "Marriage is the greatest adventure you'll ever take. Pack light, love hard, and never stop dancing in the kitchen.",
-          likes: 27,
-        },
-        {
-          name: "Catherine Dubois",
-          relationship: "Friend of the Couple",
-          text: "I've attended many weddings, but this? This is the one that makes you believe in destiny. Félicitations, mes amis!",
-          likes: 23,
-        },
-        {
-          name: "Alexander Reed",
-          relationship: "Colleague",
-          text: "Congratulations you two! Your partnership inspires both in and out of the office. Wishing you decades of joy together.",
-          likes: 11,
-        },
-        {
-          name: "Priya Sharma",
-          relationship: "Friend of the Couple",
-          text: "May your home be filled with warmth, your table with laughter, and your hearts with an abundance of love. So happy for you both! 🌺",
-          likes: 29,
-        },
-        {
-          name: "William Hayes",
-          relationship: "Family of the Bride",
-          text: "Norma — your grandmother would be so proud. She always said you'd find someone who matches your light. She was right.",
-          likes: 48,
-        },
-        {
-          name: "Emma Davis",
-          relationship: "Friend of the Couple",
-          text: "Not gonna lie, I cried during the ceremony. You two just have that effect on people. Never change. 😭❤️",
-          likes: 33,
-        },
-        {
-          name: "Lucas Martin",
-          relationship: "Friend of the Couple",
-          text: "Here's to love that's patient, kind, and never runs out of dad jokes. Congratulations Jonathan & Norma!",
-          likes: 17,
-        },
-        {
-          name: "Diana Ross",
-          relationship: "Family of the Groom",
-          text: "Every love story is beautiful, but yours is my favorite. May God's grace guide your path together. Blessings always.",
-          likes: 36,
-        },
-        {
-          name: "Nathan Cole",
-          relationship: "Colleague",
-          text: "The way you look at each other says it all. Warmest congratulations on your special day! 🌟",
-          likes: 13,
-        },
-        {
-          name: "Sophia Garcia",
-          relationship: "Friend of the Couple",
-          text: "From double dates to this beautiful wedding — what a journey. So grateful to be part of your circle. Love you guys!",
-          likes: 21,
-        },
-        {
-          name: "Christopher Lee",
-          relationship: "Family of the Bride",
-          text: "Welcome to the chaos, Jonathan! But seriously, our family just got a whole lot better with you in it. 🤗",
-          likes: 25,
-        },
-        {
-          name: "Olivia Brooks",
-          relationship: "Friend of the Couple",
-          text: "I always told Norma she deserved someone who would move mountains for her. Jonathan, you moved the whole earth. Congratulations! 🏔️",
-          likes: 30,
-        },
-        {
-          name: "Andrew Kim",
-          relationship: "Colleague",
-          text: "Big congratulations! May this new chapter bring you both immense happiness and beautiful memories.",
-          likes: 10,
-        },
-        {
-          name: "Rachel Green",
-          relationship: "Friend of the Couple",
-          text: "If your marriage is anything like your friendship — full of honesty, kindness, and the occasional food fight — you'll do just fine. 😂 Love you both!",
-          likes: 26,
-        },
-        {
-          name: "Joseph & Linda",
-          relationship: "Family of the Groom",
-          text: "We prayed for Jonathan to find someone who would love him completely. Norma, you are the answer to our prayers. Welcome to the family, sweetheart.",
-          likes: 45,
-        },
-        {
-          name: "Victoria Wells",
-          relationship: "Friend of the Couple",
-          text: "The energy at this wedding is UNREAL. The love, the joy, the flowers — everything is absolutely perfect. Just like you two. ✨💐",
-          likes: 34,
-        },
-        {
-          name: "Kevin O'Brien",
-          relationship: "Friend of the Couple",
-          text: "Twenty years from now, you'll look back on this day and smile — not because it was perfect, but because it was the start of something perfect.",
-          likes: 19,
-        },
-        {
-          name: "Amara Okafor",
-          relationship: "Friend of the Couple",
-          text: "Love recognizes no barriers. It jumps hurdles, leaps fences, penetrates walls to arrive at its destination full of hope. You two embody this completely. 🕊️",
-          likes: 37,
-        },
-        {
-          name: "Patrick Sullivan",
-          relationship: "Family of the Bride",
-          text: "Raising a glass to the bride who stole hearts since kindergarten and the groom who was brave enough to try to catch hers. Cheers! 🥂",
-          likes: 22,
-        },
-        {
-          name: "Hannah Müller",
-          relationship: "Colleague",
-          text: "Your love is an inspiration to everyone who has the privilege of knowing you. Herzlichen Glückwunsch!",
-          likes: 15,
-        },
-        {
-          name: "Ryan & Jessica",
-          relationship: "Friend of the Couple",
-          text: "Married life tip: always say 'I love you' before bed, even when you're mad. It works. Trust us on this one! 😊💑",
-          likes: 32,
-        },
-        {
-          name: "Fatima Al-Hassan",
-          relationship: "Friend of the Couple",
-          text: "Your wedding is beautiful, but it's the love between you that takes everyone's breath away. May Allah bless your union. 🌙",
-          likes: 28,
-        },
-        {
-          name: "Tyler Morrison",
-          relationship: "Friend of the Couple",
-          text: "From college roommates to groomsmen — Jonathan, this is the best decision you've ever made. Norma is incredible. Don't mess it up! 😂",
-          likes: 23,
-        },
-        {
-          name: "Claire Fontaine",
-          relationship: "Family of the Groom",
-          text: "L'amour est patient, l'amour est bon. Your love, my dear nephew, is both and so much more. Toutes nos félicitations!",
-          likes: 20,
-        },
-        {
-          name: "Samuel Brooks",
-          relationship: "Friend of the Couple",
-          text: "Today, two of the best people I know become one family. The world is a better place because of your love. Congratulations! 🌍💛",
-          likes: 41,
-        },
-        {
-          name: "Isabelle Nakamura",
-          relationship: "Friend of the Couple",
-          text: "The way Norma looks at Jonathan melts my heart every single time. You two are relationship goals. Sending all the love in the universe! 💫",
-          likes: 26,
-        },
-        {
-          name: "Derek & Alicia",
-          relationship: "Family of the Bride",
-          text: "We've watched your love grow from a spark to a wildfire. May it continue to burn bright for all your days together.",
-          likes: 34,
-        },
-        {
-          name: "Megan Collins",
-          relationship: "Colleague",
-          text: "Office just won't be the same without Jonathan's dreamy 'I'm thinking about Norma' face. 😄 Congratulations to you both!",
-          likes: 18,
-        },
-        {
-          name: "Oscar Rivera",
-          relationship: "Friend of the Couple",
-          text: "A toast to the couple who gives us all hope in love. May every sunrise bring new adventures and every sunset, peaceful contentment. 🌅",
-          likes: 25,
-        },
-        {
-          name: "Natasha Volkov",
-          relationship: "Friend of the Couple",
-          text: "Your love story is the kind they write novels about. But no author could capture the way you make each other smile. Pure magic. ✨📖",
-          likes: 29,
-        },
-        {
-          name: "Gregory Price",
-          relationship: "Family of the Groom",
-          text: "Jonathan, your grandfather would have loved Norma. She has the same grace and kindness that he always admired. You chose well, son.",
-          likes: 43,
-        },
-        {
-          name: "Jasmine Patel",
-          relationship: "Friend of the Couple",
-          text: "This is the most beautiful wedding I've ever been to, and I've been to A LOT. The love here is palpable. Congratulations! 🎊",
-          likes: 31,
-        },
-        {
-          name: "Adam Blake",
-          relationship: "Friend of the Couple",
-          text: "Real love isn't about finding the perfect person. It's about seeing an imperfect person perfectly. You two nailed it. 💯",
-          likes: 22,
-        },
-        {
-          name: "Lauren & Tom",
-          relationship: "Friend of the Couple",
-          text: "May your love be modern enough to survive the times, and old-fashioned enough to last forever. All our love!",
-          likes: 27,
-        },
-        {
-          name: "Hana Yoshida",
-          relationship: "Colleague",
-          text: "おめでとう! Your happiness radiates and inspires everyone around you. Wishing you a beautiful life together! 🌸",
-          likes: 16,
-        },
-        {
-          name: "Ricardo Ferreira",
-          relationship: "Friend of the Couple",
-          text: "From the engagement party to now — every moment has been special. You two deserve all the happiness in the world. Parabéns!",
-          likes: 20,
-        },
-        {
-          name: "Monica Abbott",
-          relationship: "Family of the Bride",
-          text: "Norma, remember what I told you on your 16th birthday? That the best things come to those who wait? Jonathan was worth the wait. Love, Aunt Mon.",
-          likes: 39,
-        },
-      ];
-      return entries.map((e) => ({ ...e, liked: false }));
+    async fetchMessages() {
+      this.loading = true;
+      try {
+        const response = await fetch("http://localhost:9000/api/guestbook");
+        if (!response.ok) throw new Error("Failed to fetch messages");
+        const data = await response.json();
+        // Map backend fields to frontend if necessary
+        this.messages = data.map(m => ({
+          name: m.name,
+          relationship: m.relationship || "",
+          text: m.message,
+          likes: 0, // Backend doesn't support likes yet
+          liked: false
+        }));
+      } catch (error) {
+        console.error("Error fetching guestbook:", error);
+      } finally {
+        this.loading = false;
+      }
     },
     loadMore() {
       this.visibleCount = Math.min(this.visibleCount + 9, this.messages.length);
     },
-    submitMessage() {
+    async submitMessage() {
       if (!this.form.name || !this.form.message) return;
-      this.messages.unshift({
+
+      const entryData = {
         name: this.form.name,
         relationship: this.form.relationship,
-        text: this.form.message,
-        likes: 0,
-        liked: false,
-      });
-      this.visibleCount = Math.min(this.visibleCount + 1, this.messages.length);
-      this.form = { name: "", relationship: "", message: "" };
+        message: this.form.message
+      };
+
+      try {
+        const response = await fetch("http://localhost:9000/api/guestbook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(entryData),
+        });
+
+        if (!response.ok) throw new Error("Failed to submit message");
+
+        const newEntry = await response.json();
+
+        this.messages.unshift({
+          name: newEntry.name,
+          relationship: newEntry.relationship,
+          text: newEntry.message,
+          likes: 0,
+          liked: false,
+        });
+
+        this.visibleCount = Math.min(this.visibleCount + 1, this.messages.length);
+        this.form = { name: "", relationship: "", message: "" };
+      } catch (error) {
+        console.error("Error submitting message:", error);
+        alert("Failed to send your message. Please try again.");
+      }
     },
     toggleLike(idx) {
       const m = this.messages[idx];

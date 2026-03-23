@@ -1,0 +1,13 @@
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/CaptureItApplication.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/controller/GalleryImageController.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/controller/GuestbookController.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/controller/RsvpController.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/dao/GalleryImageDao.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/dao/GuestbookDao.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/dao/JdbcGalleryImageDao.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/dao/JdbcGuestbookDao.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/dao/JdbcRsvpDao.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/dao/RsvpDao.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/model/GalleryImage.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/model/GuestbookEntry.java
+/home/gabriel-delapena/Workspace/CaptureIt/backend/src/main/java/com/captureit/model/Rsvp.java

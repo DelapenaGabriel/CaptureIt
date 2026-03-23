@@ -409,68 +409,7 @@ export default {
   },
   data() {
     return {
-      allPhotos: [
-        {
-          url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop",
-          caption: "The proposal ✨",
-          author: "Sarah",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600&h=400&fit=crop",
-          caption: "Engagement party",
-          author: "David",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop",
-          caption: "Our first dance practice",
-          author: "Rachel",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600&h=400&fit=crop",
-          caption: "Sunset at the vineyard",
-          author: "Marco",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600&h=400&fit=crop",
-          caption: "Cake tasting day!",
-          author: "Elizabeth",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1529636798458-92182e662485?w=600&h=400&fit=crop",
-          caption: "The venue 🏡",
-          author: "Thomas",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=600&h=400&fit=crop",
-          caption: "Rehearsal dinner",
-          author: "Sophie",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
-          caption: "Groomsmen getting ready",
-          author: "Jake",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&h=400&fit=crop",
-          caption: "Floral arrangements 🌸",
-          author: "Emily",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=600&h=400&fit=crop",
-          caption: "The rings",
-          author: "Jonathan",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1544078751-58fee2d8a03b?w=600&h=400&fit=crop",
-          caption: "Bridesmaids 💕",
-          author: "Rachel",
-        },
-        {
-          url: "https://images.unsplash.com/photo-1550005809-91ad75fb315f?w=600&h=400&fit=crop",
-          caption: "Table arrangements",
-          author: "Norma",
-        },
-      ],
+      allPhotos: [],
       lightboxPhoto: null,
       lightboxIndex: -1,
       showUploadModal: false,
@@ -480,6 +419,7 @@ export default {
       uploadForm: { caption: "", author: "" },
       particles: [],
       animFrame: null,
+      loading: false
     };
   },
   computed: {
@@ -489,15 +429,33 @@ export default {
       return rows;
     },
   },
-  mounted() {
+  async mounted() {
     this.initParticles();
     window.addEventListener("keydown", this.handleKey);
+    await this.fetchPhotos();
   },
   beforeUnmount() {
     cancelAnimationFrame(this.animFrame);
     window.removeEventListener("keydown", this.handleKey);
   },
   methods: {
+    async fetchPhotos() {
+      this.loading = true;
+      try {
+        const response = await fetch("http://localhost:9000/api/gallery");
+        if (!response.ok) throw new Error("Failed to fetch gallery");
+        const data = await response.json();
+        this.allPhotos = data.map(p => ({
+          url: p.url,
+          caption: p.caption,
+          author: p.uploadedBy
+        }));
+      } catch (error) {
+        console.error("Error fetching gallery:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
     getSpan(idx) {
       const pattern = [1, 1, 2, 1, 1, 1, 2, 1];
       return pattern[idx % pattern.length];
@@ -546,17 +504,46 @@ export default {
       this.uploadFile = null;
       this.uploadPreview = null;
     },
-    submitUpload() {
+    async submitUpload() {
       if (!this.uploadPreview) return;
-      this.allPhotos.unshift({
-        url: this.uploadPreview,
+
+      // In a real app, we'd upload the file and get a URL.
+      // For now, we'll use the local preview URL or a placeholder if we want to "persist" it in the session.
+      // But the backend expects a URL. I'll just send the preview URL for now as a placeholder for "upload logic".
+      
+      const imageData = {
+        url: this.uploadPreview, // Placeholder for actual upload
         caption: this.uploadForm.caption,
-        author: this.uploadForm.author || "Guest",
-      });
-      this.uploadForm = { caption: "", author: "" };
-      this.uploadFile = null;
-      this.uploadPreview = null;
-      this.showUploadModal = false;
+        uploadedBy: this.uploadForm.author || "Guest"
+      };
+
+      try {
+        const response = await fetch("http://localhost:9000/api/gallery", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(imageData),
+        });
+
+        if (!response.ok) throw new Error("Failed to upload image");
+
+        const newImage = await response.json();
+
+        this.allPhotos.unshift({
+          url: newImage.url,
+          caption: newImage.caption,
+          author: newImage.uploadedBy,
+        });
+
+        this.uploadForm = { caption: "", author: "" };
+        this.uploadFile = null;
+        this.uploadPreview = null;
+        this.showUploadModal = false;
+      } catch (error) {
+        console.error("Error uploading photo:", error);
+        alert("Failed to add photo to gallery. Please try again.");
+      }
     },
     initParticles() {
       const canvas = this.$refs.galleryCanvas;

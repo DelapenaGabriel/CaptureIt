@@ -38,14 +38,6 @@
           <option value="attending">Attending</option>
           <option value="declined">Declined</option>
         </select>
-        <select v-model="mealFilter" class="filter-select">
-          <option value="all">All Meals</option>
-          <option value="filet">Filet Mignon</option>
-          <option value="salmon">Salmon</option>
-          <option value="chicken">Chicken</option>
-          <option value="vegetarian">Vegetarian</option>
-          <option value="vegan">Vegan</option>
-        </select>
       </div>
 
       <div class="table-container">
@@ -55,7 +47,6 @@
               <th>Guest Name</th>
               <th>Status</th>
               <th>Guests</th>
-              <th>Meal</th>
               <th>Song Request</th>
               <th>Note</th>
             </tr>
@@ -72,7 +63,6 @@
                 </span>
               </td>
               <td>{{ rsvp.guestCount }}</td>
-              <td>{{ rsvp.meal || "—" }}</td>
               <td>{{ rsvp.song || "—" }}</td>
               <td class="note-cell">{{ rsvp.note || "—" }}</td>
             </tr>
@@ -104,34 +94,6 @@
       </div>
     </div>
 
-    <!-- Settings Tab -->
-    <div v-if="activeTab === 'settings'" class="tab-content">
-      <div class="settings-grid">
-        <div class="setting-group">
-          <label class="form-label">Groom's Name</label>
-          <input v-model="settings.groomName" class="form-input" />
-        </div>
-        <div class="setting-group">
-          <label class="form-label">Bride's Name</label>
-          <input v-model="settings.brideName" class="form-input" />
-        </div>
-        <div class="setting-group">
-          <label class="form-label">Wedding Date</label>
-          <input v-model="settings.date" type="date" class="form-input" />
-        </div>
-        <div class="setting-group">
-          <label class="form-label">Primary Color</label>
-          <input
-            v-model="settings.primaryColor"
-            type="color"
-            class="form-input color-input"
-          />
-        </div>
-        <div class="setting-group full-width">
-          <button class="btn-gold" @click="saveSettings">Save Changes</button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -142,83 +104,19 @@ export default {
     return {
       activeTab: "rsvp",
       rsvpFilter: "all",
-      mealFilter: "all",
       tabs: [
         { id: "rsvp", label: "RSVPs" },
         { id: "photos", label: "Photos" },
-        { id: "settings", label: "Settings" },
       ],
       stats: [
-        { label: "Total RSVPs", value: 47 },
-        { label: "Attending", value: 38 },
-        { label: "Declined", value: 9 },
-        { label: "Photos", value: 23 },
+        { label: "Total RSVPs", value: 0 },
+        { label: "Attending", value: 0 },
+        { label: "Declined", value: 0 },
+        { label: "Photos", value: 0 },
       ],
-      rsvps: [
-        {
-          id: 1,
-          name: "Elizabeth Bennett",
-          attending: true,
-          guestCount: 2,
-          meal: "filet",
-          song: "At Last - Etta James",
-          note: "So happy for you!",
-        },
-        {
-          id: 2,
-          name: "Charles Darcy",
-          attending: true,
-          guestCount: 1,
-          meal: "salmon",
-          song: "",
-          note: "",
-        },
-        {
-          id: 3,
-          name: "Catherine Howard",
-          attending: false,
-          guestCount: 0,
-          meal: "",
-          song: "",
-          note: "Wishing you the best",
-        },
-        {
-          id: 4,
-          name: "James & Mary",
-          attending: true,
-          guestCount: 3,
-          meal: "vegetarian",
-          song: "Can't Help Falling in Love",
-          note: "We are thrilled!",
-        },
-        {
-          id: 5,
-          name: "William Spencer",
-          attending: true,
-          guestCount: 2,
-          meal: "chicken",
-          song: "",
-          note: "",
-        },
-      ],
-      photoQueue: [
-        {
-          id: 1,
-          src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=300&h=200&fit=crop",
-          uploader: "Elizabeth",
-        },
-        {
-          id: 2,
-          src: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=300&h=200&fit=crop",
-          uploader: "James",
-        },
-      ],
-      settings: {
-        groomName: "Jonathan",
-        brideName: "Norma",
-        date: "2026-04-25",
-        primaryColor: "#C5A059",
-      },
+      rsvps: [],
+      photoQueue: [],
+
     };
   },
   computed: {
@@ -226,20 +124,46 @@ export default {
       return this.rsvps.filter((r) => {
         if (this.rsvpFilter === "attending" && !r.attending) return false;
         if (this.rsvpFilter === "declined" && r.attending) return false;
-        if (this.mealFilter !== "all" && r.meal !== this.mealFilter)
-          return false;
         return true;
       });
     },
   },
   methods: {
+    async fetchRsvps() {
+      try {
+        const response = await fetch("http://localhost:9000/api/rsvps");
+        if (!response.ok) throw new Error("Failed to fetch RSVPs");
+        const data = await response.json();
+        
+        this.rsvps = data.map(r => ({
+          id: r.id,
+          name: r.name,
+          attending: r.attending,
+          guestCount: r.guests,
+          song: r.songRequest,
+          note: r.message
+        }));
+
+        this.updateStats();
+      } catch (error) {
+        console.error("Error fetching RSVPs:", error);
+      }
+    },
+    updateStats() {
+      const total = this.rsvps.length;
+      const attending = this.rsvps.filter(r => r.attending).length;
+      const declined = total - attending;
+      
+      this.stats[0].value = total;
+      this.stats[1].value = attending;
+      this.stats[2].value = declined;
+    },
     exportCsv() {
-      const headers = ["Name", "Attending", "Guests", "Meal", "Song", "Note"];
+      const headers = ["Name", "Attending", "Guests", "Song", "Note"];
       const rows = this.rsvps.map((r) => [
         r.name,
         r.attending ? "Yes" : "No",
         r.guestCount,
-        r.meal,
         r.song,
         r.note,
       ]);
@@ -258,17 +182,19 @@ export default {
     rejectPhoto(photo) {
       this.photoQueue = this.photoQueue.filter((p) => p.id !== photo.id);
     },
-    saveSettings() {
-      alert("Settings saved (will be connected to backend)");
-    },
+
     logout() {
       localStorage.removeItem("adminToken");
       this.$router.push("/admin/login");
     },
   },
-  mounted() {
+  async mounted() {
     const token = localStorage.getItem("adminToken");
-    if (!token) this.$router.push("/admin/login");
+    if (!token) {
+      this.$router.push("/admin/login");
+      return;
+    }
+    await this.fetchRsvps();
   },
 };
 </script>
@@ -535,53 +461,6 @@ export default {
   border: 1px dashed rgba(197, 160, 89, 0.15);
 }
 
-/* Settings */
-.settings-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-}
-
-.setting-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.setting-group.full-width {
-  grid-column: 1 / -1;
-  align-items: flex-start;
-}
-
-.form-label {
-  font-family: var(--font-serif);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(240, 240, 238, 0.5);
-  margin-bottom: 0.4rem;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: rgba(197, 160, 89, 0.03);
-  border: 1px solid rgba(197, 160, 89, 0.2);
-  color: #f0f0ee;
-  font-family: var(--font-serif);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.form-input:focus {
-  border-color: rgba(197, 160, 89, 0.5);
-}
-
-.color-input {
-  padding: 0.25rem;
-  height: 42px;
-  cursor: pointer;
-}
 
 @media (min-width: 768px) {
   .admin-dashboard {
@@ -592,9 +471,4 @@ export default {
   }
 }
 
-@media (max-width: 640px) {
-  .settings-grid {
-    grid-template-columns: 1fr;
-  }
-}
 </style>

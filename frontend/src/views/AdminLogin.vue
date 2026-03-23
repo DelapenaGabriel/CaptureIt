@@ -57,14 +57,28 @@ export default {
       this.error = "";
       this.loading = true;
       try {
-        // Placeholder: will connect to backend auth
-        await new Promise((r) => setTimeout(r, 1000));
-        if (this.username === "admin" && this.password === "admin") {
-          localStorage.setItem("adminToken", "temp-token");
-          this.$router.push("/admin");
-        } else {
-          this.error = "Invalid credentials";
+        const response = await fetch("http://localhost:9000/api/admin/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: this.username,
+            password: this.password,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.message || "Invalid credentials");
         }
+
+        const data = await response.json();
+        localStorage.setItem("adminToken", data.token);
+        this.$router.push("/admin");
+      } catch (error) {
+        console.error("Login error:", error);
+        this.error = error.message;
       } finally {
         this.loading = false;
       }
