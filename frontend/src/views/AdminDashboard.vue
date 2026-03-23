@@ -98,6 +98,8 @@
 </template>
 
 <script>
+import { API_URL } from "@/config";
+
 export default {
   name: "AdminDashboard",
   data() {
@@ -131,7 +133,7 @@ export default {
   methods: {
     async fetchRsvps() {
       try {
-        const response = await fetch("http://localhost:9000/api/rsvps");
+        const response = await fetch(`${API_URL}/rsvps`);
         if (!response.ok) throw new Error("Failed to fetch RSVPs");
         const data = await response.json();
         

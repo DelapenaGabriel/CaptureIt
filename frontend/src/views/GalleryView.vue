@@ -399,6 +399,7 @@
 </template>
 
 <script>
+import { API_URL } from "@/config";
 import { useWeddingStore } from "@/stores/wedding";
 
 export default {
@@ -442,7 +443,7 @@ export default {
     async fetchPhotos() {
       this.loading = true;
       try {
-        const response = await fetch("http://localhost:9000/api/gallery");
+        const response = await fetch(`${API_URL}/gallery`);
         if (!response.ok) throw new Error("Failed to fetch gallery");
         const data = await response.json();
         this.allPhotos = data.map(p => ({
@@ -518,7 +519,7 @@ export default {
       };
 
       try {
-        const response = await fetch("http://localhost:9000/api/gallery", {
+        const response = await fetch(`${API_URL}/gallery`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -284,6 +284,7 @@
 </template>
 
 <script>
+import { API_URL } from "@/config";
 import { useWeddingStore } from "@/stores/wedding";
 
 export default {
@@ -316,7 +317,7 @@ export default {
     async fetchMessages() {
       this.loading = true;
       try {
-        const response = await fetch("http://localhost:9000/api/guestbook");
+        const response = await fetch(`${API_URL}/guestbook`);
         if (!response.ok) throw new Error("Failed to fetch messages");
         const data = await response.json();
         // Map backend fields to frontend if necessary
@@ -346,7 +347,7 @@ export default {
       };
 
       try {
-        const response = await fetch("http://localhost:9000/api/guestbook", {
+        const response = await fetch(`${API_URL}/guestbook`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

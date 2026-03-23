@@ -13,11 +13,11 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Standard Spring Boot environment variable defaults
-ENV SERVER_PORT=9000
+ENV SERVER_PORT=${PORT:-9000}
 ENV SPRING_DATASOURCE_URL=jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:6543/postgres
 ENV SPRING_DATASOURCE_USERNAME=postgres.zxdwcyshzxkrzraolmmh
 ENV SPRING_DATASOURCE_PASSWORD=!Jonathanandnorma2026
 
-EXPOSE 9000
+EXPOSE 10000
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

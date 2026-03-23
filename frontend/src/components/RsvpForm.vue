@@ -106,6 +106,8 @@
 </template>
 
 <script>
+import { API_URL } from "@/config";
+
 export default {
   name: "RsvpForm",
   data() {
@@ -136,7 +138,7 @@ export default {
       };
 
       try {
-        const response = await fetch("http://localhost:9000/api/rsvps", {
+        const response = await fetch(`${API_URL}/rsvps`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

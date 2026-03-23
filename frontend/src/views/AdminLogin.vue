@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { API_URL } from "@/config";
+
 export default {
   name: "AdminLogin",
   data() {
@@ -57,7 +59,7 @@ export default {
       this.error = "";
       this.loading = true;
       try {
-        const response = await fetch("http://localhost:9000/api/admin/login", {
+        const response = await fetch(`${API_URL}/admin/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
